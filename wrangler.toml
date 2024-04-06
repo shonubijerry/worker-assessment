@@ -1,0 +1,17 @@
+name = "worker-assessment"
+main = "src/index.ts"
+compatibility_date = "2022-11-28"
+node_compat=true
+
+[env.dev]
+name = "assessment-dev"
+
+[env.dev.var]
+  ENVIRONMENT = "dev"
+
+[env.staging]
+name = "worker-assessment"
+route = "https://worker-assessment.koredujar.workers.dev/*"
+
+[env.staging.var]
+  ENVIRONMENT = "staging"
