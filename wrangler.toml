@@ -18,9 +18,9 @@ ENVIRONMENT = "dev"
 name = "worker-assessment"
 route = "https://stacked.com.ng/*"
 
-[env.staging.var]
-ENVIRONMENT = "staging"
-
 kv_namespaces = [
     { binding = "STORAGE_KV", id = "aaff0a0690f5482b95f85b9b76d816e7" }
 ]
+
+[env.staging.var]
+ENVIRONMENT = "staging"

@@ -18,17 +18,19 @@ jobs:
     steps:
       - name: Download files from current repository
         uses: actions/checkout@v4
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+
       - name: Install node modules
-        run: npm install
+        run: npm ci
+
       - name: Deploy worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          wranglerVersion: "3.1.0"
           environment: staging
           secrets: |
             JWT_SECRET
