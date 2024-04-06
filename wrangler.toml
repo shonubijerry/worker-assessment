@@ -2,6 +2,7 @@ name = "worker-assessment"
 main = "src/index.ts"
 compatibility_date = "2022-11-28"
 node_compat=true
+account_id = "e5d5d460d5114f727f30dc01a4b9e363"
 
 [env.dev]
 name = "assessment-dev"
