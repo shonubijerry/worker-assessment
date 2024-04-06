@@ -7,6 +7,10 @@ account_id = "e5d5d460d5114f727f30dc01a4b9e363"
 [env.dev]
 name = "assessment-dev"
 
+kv_namespaces = [
+    { binding = "STORAGE_KV", id = "aaff0a0690f5482b95f85b9b76d816e7" }
+]
+
 [env.dev.var]
 ENVIRONMENT = "dev"
 
@@ -16,3 +20,7 @@ route = "https://stacked.com.ng/*"
 
 [env.staging.var]
 ENVIRONMENT = "staging"
+
+kv_namespaces = [
+    { binding = "STORAGE_KV", id = "aaff0a0690f5482b95f85b9b76d816e7" }
+]

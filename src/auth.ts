@@ -1,7 +1,6 @@
 import { OpenAPIRoute, Path, Body, Header, Str } from "@cloudflare/itty-router-openapi";
 import jwt from '@tsndr/cloudflare-worker-jwt'
-
-const users: Record<string, User> = {};
+import { KVStore } from "./cache";
 
 interface User {
   username: string;
@@ -21,8 +20,8 @@ const UserSchema = {
   address: String
 };
 
-function validateCredentials(username: string, password: string): boolean {
-  return users[username]?.password === password;
+function validateCredentials(user: User, password: string): boolean {
+  return user.password === password;
 }
 
 function generateToken(user: User, env: Env): Promise<string> {
@@ -54,11 +53,18 @@ export class Login extends OpenAPIRoute {
       return new Response("Missing username or password", { status: 400 });
     }
 
-    if (!validateCredentials(username, password)) {
+    let entry = await env.STORAGE_KV.get(username)
+    if (!entry) {
+      return new Response("Missing username or password", { status: 400 });
+    }
+
+    const user = <User>JSON.parse(entry)
+
+    if (!validateCredentials(user, password)) {
       return new Response("Invalid credentials", { status: 401 });
     }
 
-    const token = await generateToken(users[username], env);
+    const token = await generateToken(user, env);
 
     return { token }
   }
@@ -84,20 +90,21 @@ export class Register extends OpenAPIRoute {
     env: Env,
     context: any,
     data: Record<string, any>
-  ) {    
+  ) {
+    console.log(env, env.STORAGE_KV);
+    
     const { username, email, password } = data.body;
 
     if (!username || !email || !password) {
       return new Response("Missing username, email, or password", { status: 400 });
     }
 
-    if (users[username]) {
+    if (await env.STORAGE_KV.get(username)) {
       return new Response("Username already exists", { status: 409 });
     }
 
-    users[username] = { ...data.body };
+    await env.STORAGE_KV.put(username, JSON.stringify({ ...data.body }))
 
-    const token = await generateToken(users[username], env);
     return new Response("Registration successful", { status: 201 });
   }
 }
@@ -135,12 +142,12 @@ export class Profile extends OpenAPIRoute {
 
     const { payload } = jwt.decode<User>(token)
 
-    const user = users[(<User>payload).username]
+    const user = await env.STORAGE_KV.get((<User>payload).username)
 
     if (!user) {
       return new Response("Invalid user", { status: 401 });
     }
 
-    return { ...user, password: undefined };
+    return { ...JSON.parse(user), password: undefined };
   }
 }
