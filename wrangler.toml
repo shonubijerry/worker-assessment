@@ -7,11 +7,11 @@ node_compat=true
 name = "assessment-dev"
 
 [env.dev.var]
-  ENVIRONMENT = "dev"
+ENVIRONMENT = "dev"
 
 [env.staging]
 name = "worker-assessment"
-route = "https://worker-assessment.koredujar.workers.dev/*"
+route = "https://stacked.com.ng/*"
 
 [env.staging.var]
-  ENVIRONMENT = "staging"
+ENVIRONMENT = "staging"

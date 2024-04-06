@@ -14,12 +14,17 @@ on:
         default: staging
 jobs:
   deploy:
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
     runs-on: ubuntu-latest
-    env:
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
-      - name: Automatic deploy to staging
-        run: wrangler deploy --env=staging
+      - uses: actions/checkout@v2
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          secrets: |
+            JWT_SECRET
+        env:
+          JWT_SECRET: ${{ secrets.STAGING_JWT_SECRET }}
+      - name: Install Wrangler
+        run: npm install -g @cloudflare/wrangler
+      - name: Deploy to Cloudflare Workers
+        run: wrangler deploy --env ${{ github.event.inputs.environment }}

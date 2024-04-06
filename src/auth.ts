@@ -25,10 +25,8 @@ function validateCredentials(username: string, password: string): boolean {
   return users[username]?.password === password;
 }
 
-function generateToken(user: User, context: any): Promise<string> {
-  console.log(context);
-  
-  return jwt.sign({ username: user.username }, context.env.JWT_SECRET);
+function generateToken(user: User, env: Env): Promise<string> {
+  return jwt.sign({ username: user.username }, env.JWT_SECRET);
 }
 
 export class Login extends OpenAPIRoute {
@@ -60,7 +58,7 @@ export class Login extends OpenAPIRoute {
       return new Response("Invalid credentials", { status: 401 });
     }
 
-    const token = await generateToken(users[username], context);
+    const token = await generateToken(users[username], env);
 
     return { token }
   }
@@ -83,12 +81,10 @@ export class Register extends OpenAPIRoute {
 
   async handle(
     request: Request,
-    env: any,
+    env: Env,
     context: any,
     data: Record<string, any>
-  ) {
-    console.log(env, context);
-    
+  ) {    
     const { username, email, password } = data.body;
 
     if (!username || !email || !password) {
@@ -101,7 +97,7 @@ export class Register extends OpenAPIRoute {
 
     users[username] = { ...data.body };
 
-    const token = await generateToken(users[username], context);
+    const token = await generateToken(users[username], env);
     return new Response("Registration successful", { status: 201 });
   }
 }

@@ -8,7 +8,7 @@
 	"author": "",
 	"main": "src/index.ts",
 	"scripts": {
-		"dev": "wrangler dev --port 8888",
+		"dev": "wrangler dev --port 8888 --env=dev",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"dependencies": {

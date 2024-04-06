@@ -1,3 +1,4 @@
 wrangler-local-state
 dist
 node_modules
+.wrangler
