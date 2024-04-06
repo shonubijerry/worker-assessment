@@ -26,6 +26,6 @@ jobs:
         env:
           JWT_SECRET: ${{ secrets.STAGING_JWT_SECRET }}
       - name: Install Wrangler
-        run: npm install -g @cloudflare/wrangler
+        run: npm install -g wrangler
       - name: Deploy to Cloudflare Workers
-        run: wrangler deploy --env ${{ github.event.inputs.environment }}
+        run: wrangler deploy --env staging
