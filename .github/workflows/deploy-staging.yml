@@ -27,6 +27,13 @@ jobs:
       - name: Install node modules
         run: npm ci
 
+      - name: Build Worker Sourcemaps
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: microservices/request_proxy_api
+          command: publish --dry-run --outdir dist --env staging
+
       - name: Deploy worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
