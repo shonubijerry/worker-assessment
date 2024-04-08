@@ -21,7 +21,7 @@ const router = OpenAPIRouter({
 
 router.post("/api/login", Login);
 router.post("/api/register", Register);
-router.get("/api/tasks/profile", Profile);
+router.get("/api/profile", Profile);
 
 // Redirect root request to the /docs page
 router.original.get("/", (request) =>
