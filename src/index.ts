@@ -32,5 +32,7 @@ router.original.get("/", (request) =>
 router.all("*", () => new Response("Not Found.", { status: 404 }));
 
 export default {
-	fetch: router.handle,
+	fetch: async (req: Request, ...extra: any) => {
+		return router.handle(req, ...extra).catch(error => console.log(error))
+	}
 };
