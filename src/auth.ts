@@ -1,6 +1,6 @@
 import { OpenAPIRoute, Path, Body, Header, Str } from "@cloudflare/itty-router-openapi";
 import jwt from '@tsndr/cloudflare-worker-jwt'
-import { KVStore } from "./cache";
+import { AvatarGenerator } from 'random-avatar-generator'
 
 interface User {
   username: string;
@@ -17,7 +17,8 @@ const UserSchema = {
   ...LoginSchema,
   email: new Str({ example: "lorem@mail.com" }),
   phone: new Str({ example: "09088009900" }),
-  address: String
+  address: String,
+  image: String
 };
 
 function validateCredentials(user: User, password: string): boolean {
@@ -90,9 +91,7 @@ export class Register extends OpenAPIRoute {
     env: Env,
     context: any,
     data: Record<string, any>
-  ) {
-    console.log(env, env.STORAGE_KV);
-    
+  ) {    
     const { username, email, password } = data.body;
 
     if (!username || !email || !password) {
@@ -103,7 +102,7 @@ export class Register extends OpenAPIRoute {
       return new Response("Username already exists", { status: 409 });
     }
 
-    await env.STORAGE_KV.put(username, JSON.stringify({ ...data.body }))
+    await env.STORAGE_KV.put(username, JSON.stringify({ ...data.body, image: new AvatarGenerator().generateRandomAvatar() }))
 
     return new Response("Registration successful", { status: 201 });
   }
@@ -111,7 +110,7 @@ export class Register extends OpenAPIRoute {
 
 export class Profile extends OpenAPIRoute {
   static schema = {
-    tags: ["Auth"],
+    tags: ["Me"],
     summary: "Fetch user profile",
     responses: {
       200: {
